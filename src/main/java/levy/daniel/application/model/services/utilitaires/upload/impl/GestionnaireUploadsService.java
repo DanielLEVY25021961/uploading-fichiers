@@ -1,5 +1,6 @@
 package levy.daniel.application.model.services.utilitaires.upload.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import levy.daniel.application.ConfigurationApplicationManager;
 import levy.daniel.application.IConstantesSautsLigne;
 import levy.daniel.application.IConstantesSeparateurs;
+import levy.daniel.application.apptechnic.exceptions.technical.impl.ExceptionTechnique;
 
 /**
  * CLASSE GestionnaireUploadsService :<br/>
@@ -26,6 +28,7 @@ import levy.daniel.application.IConstantesSeparateurs;
  * - Mots-clé :<br/>
  * lister tous fichiers simples sous répertoire.<br/>
  * lister tous fichiers simples sous répertoire et sous arborescence.<br/>
+ * afficher lists strings, affichier Liste String,<br/>
  * <br/>
  *
  * - Dépendances :<br/>
@@ -53,6 +56,18 @@ public class GestionnaireUploadsService {
 	public static final String METHODE_RECUPERER_ROOT_UPLOADS 
 		= "Méthode recupererRootUploadsDansProperties()";
 	
+	/**
+	 * "méthode recupererListeFichiersSousRepertoire(Path pPath)".
+	 */
+	public static final String METHODE_RECUPERER_LISTE_FICHIERS_SOUS_REPERTOIRE 
+		= "méthode recupererListeFichiersSousRepertoire(Path pPath)";
+	
+	/**
+	 * "méthode recupererListeFichiersMemePoidsSousRepertoire(Path pPath, File pFile)".
+	 */
+	public static final String METHODE_RECUPERER_LISTE_FICHIERS_MEME_POIDS_SOUS_REPERTOIRE 
+	= "méthode recupererListeFichiersMemePoidsSousRepertoire(Path pPath, File pFile)";
+	
     /**
      * Path du répertoire racine des fichiers uploadés.<br/>
      */
@@ -78,6 +93,260 @@ public class GestionnaireUploadsService {
 	private GestionnaireUploadsService() {
 		super();
 	} // Fin de CONSTRUCTEUR D'ARITE NULLE.________________________________
+	
+
+	
+	/**
+	 * retourne la <strong>liste des chemins</strong> 
+	 * <i>sous forme de String</i> 
+	 * de <strong>tous les fichiers <i>simples</i> contenus dans l'arborescence 
+	 * sous le <i>répertoire</i> <code>rootLocationPath</code></strong> 
+	 * ainsi que 
+	 * <strong>dans tous ses sous-répertoires</strong>.
+	 * <ul>
+	 * <li>récupère la racine des fichiers uploadés 
+	 * <code>rootLocationPath</code>et la crée 
+	 * ainsi que son arborescence si nécessaire.</li>
+	 * <li>Récupère tous les fichiers simples dans tous les 
+	 * sous-répertoires situés sous le répertoire racine des fichiers 
+	 * uploadés <code>rootLocationPath</code>.</li>
+	 * <li>Ne récupère pas les sous-répertoires.</li>
+	 * </ul>
+	 *
+	 * @return : List&lt;String&gt; : 
+	 * liste des chemins de tous les fichiers SIMPLES (pas les répertoires)
+	 * contenus dans l'arborescence  sous le répertoire pPath 
+	 * quel que soit le niveau d'arborescence.
+	 * 
+	 * @throws Exception 
+	 */
+	public static List<String> recupererListeFichiersUploades() 
+			throws Exception {
+		
+		synchronized (GestionnaireUploadsService.class) {
+			
+			/* récupère la racine des fichiers uploadés 
+			 * et la crée ainsi que son arborescence si nécessaire. */
+			init();
+			
+			return recupererListeFichiersSousRepertoire(rootLocationPath);
+			
+		} // Fin de Synchronized._______________________________
+		
+	} // Fin de recupererListeFichiersUploades().__________________________
+
+
+	
+	/**
+	 * retourne la <strong>liste des chemins</strong> 
+	 * <i>sous forme de String</i> 
+	 * de <strong>tous les fichiers <i>simples</i> contenus dans l'arborescence 
+	 * sous le <i>répertoire</i> pPath</strong> ainsi que 
+	 * <strong>dans tous ses sous-répertoires</strong>.
+	 * <ul>
+	 * <li>Récupère tous les fichiers simples dans tous les 
+	 * sous-répertoires situés sous le répertoire racine situé à pPath.</li>
+	 * <li>Ne récupère pas les sous-répertoires.</li>
+	 * </ul>
+	 * - retourne null si pPath == null.<br/>
+	 * - retourne null si pPath n'existe pas.<br/>
+	 * - retourne null si pPath n'est pas un répertoire.<br/>
+	 * <br/>
+	 *
+	 * @param pPath : java.nio.file.Path : Path du <strong>répertoire</strong> 
+	 * dont on veut lister tous les fichiers simples.
+	 * 
+	 * @return List&lt;String&gt; : 
+	 * liste des chemins de tous les fichiers SIMPLES (pas les répertoires)
+	 * contenus dans l'arborescence  sous le répertoire pPath 
+	 * quel que soit le niveau d'arborescence.
+	 * 
+	 * @throws Exception
+	 */
+	public static List<String> recupererListeFichiersSousRepertoire(
+			final Path pPath) throws Exception {
+		
+		synchronized (GestionnaireUploadsService.class) {
+			
+			/* retourne null si pPath == null. */
+			if (pPath == null) {
+				return null;
+			}
+			
+			/* retourne null si pPath n'existe pas. */
+			if (!Files.exists(pPath)) {
+				return null;
+			}
+			
+			/* retourne null si pPath n'est pas un répertoire. */
+			if (!Files.isDirectory(pPath)) {
+				return null;
+			}
+			
+			/* retourne la liste des chemins de tous les fichiers simples 
+			 * sous pPath et son arborescence. */
+			try (Stream<Path> streamPath 
+					= Files.walk(Paths.get(pPath.toString()))) {
+
+				final List<String> resultat 
+					= streamPath
+						.filter(Files::isRegularFile)
+						.map(path -> path.toAbsolutePath()
+						.normalize().toString())
+						.collect(Collectors.toList());
+
+				return resultat;
+
+			} catch (IOException e) {
+				
+				final String message 
+					= CLASSE_GESTIONNAIRE_UPLOADS_SERVICE 
+						+ IConstantesSeparateurs.SEPARATEUR_MOINS_AERE
+						+ METHODE_RECUPERER_LISTE_FICHIERS_SOUS_REPERTOIRE 
+						+ IConstantesSeparateurs.SEPARATEUR_MOINS_AERE 
+						+ "impossible de parcourir le répertoire " 
+						+ pPath.toAbsolutePath().normalize().toString();
+				
+				if (LOG.isFatalEnabled()) {
+					LOG.fatal(message, e);
+				}
+				
+				throw new ExceptionTechnique(message, e);
+			}
+
+		} // Fin de Synchronized._______________________________
+		
+	} // Fin de recupererListeFichiersSousRepertoire(...)._________________
+	
+	
+	
+	/**
+	 * retourne la <strong>liste des chemins</strong> 
+	 * <i>sous forme de String</i> 
+	 * de <strong>tous les fichiers <i>simples</i> contenus dans l'arborescence 
+	 * sous le <i>répertoire</i> pPath</strong> ainsi que 
+	 * <strong>dans tous ses sous-répertoires</strong> 
+	 * de <strong>même poids que pFile</strong>.
+	 * <ul>
+	 * <li>Récupère tous les fichiers simples dans tous les 
+	 * sous-répertoires situés sous le répertoire racine situé à pPath.</li>
+	 * <li>Ne récupère pas les sous-répertoires.</li>
+	 * </ul>
+	 * - retourne null si pPath == null.<br/>
+	 * - retourne null si pPath n'existe pas.<br/>
+	 * - retourne null si pPath n'est pas un répertoire.<br/>
+	 * - retourne null si pFile == null.<br/>
+	 * - retourne null si pFile n'existe pas.<br/>
+	 * - retourne null si pFile est un répertoire.<br/>
+	 * <br/>
+	 *
+	 * @param pPath : java.nio.file.Path : Path du <strong>répertoire</strong> 
+	 * dont on veut lister tous les fichiers simples de même poids que pFile. 
+	 * @param pFile : java.io.File.
+	 * 
+	 * @return List&lt;String&gt; :
+	 * 
+	 * @throws Exception
+	 */
+	public static List<String> recupererListeFichiersMemePoidsSousRepertoire(
+			final Path pPath, final File pFile) throws Exception {
+		
+		synchronized (GestionnaireUploadsService.class) {
+			
+			/* retourne null si pPath == null. */
+			if (pPath == null) {
+				return null;
+			}
+			
+			/* retourne null si pPath n'existe pas. */
+			if (!Files.exists(pPath)) {
+				return null;
+			}
+			
+			/* retourne null si pPath n'est pas un répertoire. */
+			if (!Files.isDirectory(pPath)) {
+				return null;
+			}
+			
+			/* retourne null si pFile == null. */
+			if (pFile == null) {
+				return null;
+			}
+			
+			/* retourne null si pFile n'existe pas. */
+			if (!pFile.exists()) {
+				return null;
+			}
+			
+			/* retourne null si pFile est un répertoire. */
+			if (pFile.isDirectory()) {
+				return null;
+			}
+			
+			/* retourne la liste des chemins de tous les fichiers simples 
+			 * sous pPath et son arborescence de même poids que pFile. */
+			try (Stream<Path> streamPath 
+					= Files.walk(Paths.get(pPath.toString()))) {
+
+				final List<String> resultat 
+					= streamPath
+						.filter(Files::isRegularFile)
+						.filter(path -> path.toFile().length() == pFile.length())
+						.map(path -> path.toAbsolutePath()
+						.normalize().toString())
+						.collect(Collectors.toList());
+
+				return resultat;
+
+			} catch (IOException e) {
+				
+				final String message 
+					= CLASSE_GESTIONNAIRE_UPLOADS_SERVICE 
+						+ IConstantesSeparateurs.SEPARATEUR_MOINS_AERE
+						+ METHODE_RECUPERER_LISTE_FICHIERS_MEME_POIDS_SOUS_REPERTOIRE 
+						+ IConstantesSeparateurs.SEPARATEUR_MOINS_AERE 
+						+ "impossible de parcourir le répertoire " 
+						+ pPath.toAbsolutePath().normalize().toString();
+				
+				if (LOG.isFatalEnabled()) {
+					LOG.fatal(message, e);
+				}
+				
+				throw new ExceptionTechnique(message, e);
+			}
+
+		} // Fin de Synchronized._______________________________
+		
+	} // Fin de recupererListeFichiersMemePoidsSousRepertoire(...).________
+	
+
+	
+	/**
+	 * affiche une Liste de Strings.
+	 *
+	 * @param pList : List&lt;String&gt;
+	 * 
+	 * @return : String : pour affichage.<br/>
+	 */
+	public static final String afficherListeString(
+			final List<String> pList) {
+		
+		/* retourne null si pList == null. */
+		if (pList == null) {
+			return null;
+		}
+		
+		String resultat = null;
+		
+		final Stream<String> resultatStream = pList.stream();
+		
+		resultat = resultatStream
+			.map(s -> s + IConstantesSautsLigne.NEWLINE)
+			.collect(Collectors.joining());
+		
+		return resultat;
+		
+	} // Fin de afficherListeString(...).__________________________________
 	
 	
 	
@@ -194,142 +463,7 @@ public class GestionnaireUploadsService {
 		} // Fin de Synchronized._______________________________
 		
 	} // Fin de init().____________________________________________________
-	
 
-	
-	/**
-	 * .<br/>
-	 * <br/>
-	 *
-	 * @return : List<String> :  .<br/>
-	 * 
-	 * @throws IOException 
-	 */
-	public static List<String> recupererListeFichiersUploades() 
-			throws IOException {
-		
-		synchronized (GestionnaireUploadsService.class) {
-			
-			init();
-			
-			try (Stream<Path> streamPath 
-					= Files.walk(Paths.get(rootLocationPath.toString()))) {
-
-				final List<String> resultat 
-					= streamPath
-						.filter(Files::isRegularFile)
-						.map(path -> path.toAbsolutePath().normalize().toString())
-						.collect(Collectors.toList());
-
-				return resultat;
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			return null;
-			
-		} // Fin de Synchronized._______________________________
-		
-	} // Fin de recupererListeFichiersUploades().__________________________
-
-
-	
-	/**
-	 * récupère la <strong>liste des chemins</strong> 
-	 * <i>sous forme de String</i> 
-	 * de <strong>tous les fichiers <i>simples</i> contenus dans l'arborescence 
-	 * sous le <i>répertoire</i> pPath</strong>.<br/>
-	 * Récupère tous les fichiers simples dans tous les 
-	 * sous-répertoires situés sous le répertoire racine situé à pPath.<br/>
-	 * Ne récupère pas les sous-répertoires.<br/>
-	 * <ul>
-	 * </ul>
-	 * - retourne null si pPath == null.<br/>
-	 * - retourne null si pPath n'existe pas.<br/>
-	 * - retourne null si pPath n'est pas un répertoire.<br/>
-	 * <br/>
-	 *
-	 * @param pPath : java.nio.file.Path : Path du <strong>répertoire</strong> 
-	 * dont on veut lister tous les fichiers simples.
-	 * 
-	 * @return List&lt;File&gt; : List<String> : 
-	 * liste des chemins de tous les fichiers SIMPLES (pas les répertoires)
-	 * contenus dans l'arborescence  sous le répertoire pPath.
-	 * 
-	 * @throws IOException
-	 */
-	public static List<String> recupererListeFichiersSousRepertoire(
-			final Path pPath) throws IOException {
-		
-		synchronized (GestionnaireUploadsService.class) {
-			
-			/* retourne null si pPath == null. */
-			if (pPath == null) {
-				return null;
-			}
-			
-			/* retourne null si pPath n'existe pas. */
-			if (!Files.exists(pPath)) {
-				return null;
-			}
-			
-			/* retourne null si pPath n'est pas un répertoire. */
-			if (!Files.isDirectory(pPath)) {
-				return null;
-			}
-			
-			/* retourne la liste des chemins de tous les fichiers simples 
-			 * sous pPath et son arborescence. */
-			try (Stream<Path> streamPath 
-					= Files.walk(Paths.get(pPath.toString()))) {
-
-				final List<String> resultat 
-					= streamPath
-						.filter(Files::isRegularFile)
-						.map(path -> path.toAbsolutePath()
-						.normalize().toString())
-						.collect(Collectors.toList());
-
-				return resultat;
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			return null;
-			
-		} // Fin de Synchronized._______________________________
-		
-	} // Fin de recupererListeFichiersUploades().__________________________
-
-	
-	
-	/**
-	 * .<br/>
-	 * <br/>
-	 *
-	 * @param pList
-	 * @return : String :  .<br/>
-	 */
-	public static final String afficherListeString(final List<String> pList) {
-		
-		/* retourne null si pList == null. */
-		if (pList == null) {
-			return null;
-		}
-		
-		String resultat = null;
-		
-		final Stream<String> resultatStream = pList.stream();
-		
-		resultat = resultatStream
-			.map(s -> s + IConstantesSautsLigne.NEWLINE)
-			.collect(Collectors.joining());
-		
-		return resultat;
-		
-	}
 	
 	
 } // FIN DE LA CLASSE GestionnaireUploadsService.----------------------------

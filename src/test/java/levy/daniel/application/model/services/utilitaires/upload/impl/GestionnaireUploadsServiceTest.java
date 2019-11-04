@@ -1,6 +1,8 @@
 package levy.daniel.application.model.services.utilitaires.upload.impl;
 
-import java.io.IOException;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -11,7 +13,7 @@ import org.junit.Test;
 
 /**
  * CLASSE GestionnaireUploadsServiceTest :<br/>
- * .<br/>
+ * Teste la classe {@link GestionnaireUploadsService}.<br/>
  * <br/>
  *
  * - Exemple d'utilisation :<br/>
@@ -54,7 +56,13 @@ public class GestionnaireUploadsServiceTest {
 	 */
 	public static final String LISTE_FICHIERS_SOUS_REPERTOIRE 
 		= "Liste des fichiers sous le répertoire : ";
-		
+
+	/**
+	 * "la liste resultat ne doit pas être null : ".
+	 */
+	public static final String LISTE_RESULTAT_DOIT_PAS_ETRE_NULL 
+		= "la liste resultat ne doit pas être null : ";
+	
 	/**
 	 * LOG : Log : 
 	 * Logger pour Log4j (utilisant commons-logging).
@@ -76,17 +84,56 @@ public class GestionnaireUploadsServiceTest {
 	
 	/**
 	 * <p>teste la méthode 
-	 * <code>recupererListeFichiersSousRepertoire(Path pPath)</code>.</p>
+	 * <code>recupererListeFichiersUploades()</code>.</p>
 	 * 
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
 	@SuppressWarnings(UNUSED)
     @Test
-	public void testRecupererListeFichiersSousRepertoire() throws IOException {
+	public void testRecupererListeFichiersUploades() throws Exception {
 				
 		// **********************************
 		// AFFICHAGE DANS LE TEST ou NON
 		final boolean affichage = true;
+		// **********************************
+		
+		/* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+		System.out.println("********** CLASSE GestionnaireUploadsServiceTest - méthode testRecupererListeFichiersUploades() ********** ");
+		}
+		
+		// METHODE A TESTER *************************************************
+		final List<String> resultat 
+			= GestionnaireUploadsService // NOPMD by dan on 02/11/19 23:05
+				.recupererListeFichiersUploades();
+		// ******************************************************************
+		
+		
+		/* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println(LISTE_FICHIERS_SOUS_REPERTOIRE + '\n' 
+					+ GestionnaireUploadsService.afficherListeString(resultat)); // NOPMD by dan on 02/11/19 23:06
+		}
+
+		assertTrue("BIDON : ", 1 == 1);
+		
+	} // Fin de testRecupererListeFichiersUploades().______________________
+
+
+	
+	/**
+	 * <p>teste la méthode 
+	 * <code>recupererListeFichiersSousRepertoire(Path pPath)</code>.</p>
+	 * 
+	 * @throws Exception 
+	 */
+	@SuppressWarnings(UNUSED)
+    @Test
+	public void testRecupererListeFichiersSousRepertoire() throws Exception {
+				
+		// **********************************
+		// AFFICHAGE DANS LE TEST ou NON
+		final boolean affichage = false;
 		// **********************************
 		
 		/* AFFICHAGE A LA CONSOLE. */
@@ -107,9 +154,12 @@ public class GestionnaireUploadsServiceTest {
 		
 		/* AFFICHAGE A LA CONSOLE. */
 		if (AFFICHAGE_GENERAL && affichage) {
-			System.out.println(LISTE_FICHIERS_SOUS_REPERTOIRE + '\n' + GestionnaireUploadsService.afficherListeString(resultat)); // NOPMD by dan on 02/11/19 23:06
+			System.out.println(LISTE_FICHIERS_SOUS_REPERTOIRE + '\n' 
+					+ GestionnaireUploadsService.afficherListeString(resultat)); // NOPMD by dan on 02/11/19 23:06
 		}
 
+		assertNotNull(LISTE_RESULTAT_DOIT_PAS_ETRE_NULL, resultat);
+		
 	} // Fin de testRecupererListeFichiersSousRepertoire().________________
 
 	

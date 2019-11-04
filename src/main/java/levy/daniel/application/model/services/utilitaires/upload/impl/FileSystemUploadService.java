@@ -256,7 +256,8 @@ public class FileSystemUploadService implements IUploadService {
 			final Path pathTarget = pFileTarget.toPath();
 			
 			final int nombreNiveauxArborescence = pathTarget.getNameCount();
-			final Path arborescenceTarget = pathTarget.subpath(0, nombreNiveauxArborescence - 1);
+			final Path arborescenceTarget
+				= pathTarget.subpath(0, nombreNiveauxArborescence - 1);
 			
 			if (!Files.exists(arborescenceTarget)) {
 				
@@ -277,6 +278,9 @@ public class FileSystemUploadService implements IUploadService {
 		        }
 			}
 			
+			/* crée le fichier pFileTarget vide si il n'existait pas 
+			 * et recopie dedans le contenu de pFileSource. */
+			/* écrase et remplace pFileTarget si il existait déjà. */
 			Files.copy(inputStream
 					, pathTarget
 						, StandardCopyOption.REPLACE_EXISTING);

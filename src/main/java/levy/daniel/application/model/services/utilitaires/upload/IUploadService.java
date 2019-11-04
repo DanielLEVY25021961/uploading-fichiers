@@ -79,6 +79,7 @@ public interface IUploadService {
      * <ul>
      * <li>crée le fichier pFileTarget vide si il n'existait pas 
      * et recopie dedans le contenu de pFileSource.</li>
+     * <li>écrase et remplace pFileTarget si il existait déjà.</li>
      * </ul>
      * <br/>
      * - n'uploade rien, LOG.fatal et jette une 
