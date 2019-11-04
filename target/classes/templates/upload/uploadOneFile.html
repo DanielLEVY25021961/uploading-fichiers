@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+	
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" 
+		href="../../static/css/bootstrap.min.css" 
+		th:href="@{css/bootstrap.min.css}" />
+		<title>uploadOneFile.html</title>
+		
+	</head>
+	
+	<body>
+	
+		<h1>Téléversement (UPLOAD) d'un fichier unique</h1>
+		
+		<div th:if="${message}">
+			<h2 th:text="${message}"/>
+		</div>
+	
+		<div>
+			<form method="POST" enctype="multipart/form-data" action="/uploadOneFile">
+				<table class="table">
+					<tr><td>Fichier à téléverser : </td><td><input type="file" name="fichierAUploader" /></td></tr>
+					<tr><td></td><td><input type="submit" value="Téléverser" /></td></tr>
+				</table>
+			</form>
+		</div>
+		
+		<div>
+			<a th:href="@{/}">retour vers l'accueil</a>
+		</div>
+	
+		<div>
+			<p>liste des fichiers déjà uploadés</p>
+			<ul>
+				<li th:each="entryFile : ${fichiersDejaUploadesMap}">
+					<a th:href="${entryFile.key}" th:text="${entryFile.value}" />
+				</li>
+			</ul>
+		</div>
+	
+	</body>
+
+</html>

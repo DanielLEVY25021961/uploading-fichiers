@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: levy.daniel.application.model.services.utilitaires.upload.impl.FileSystemUploadServiceTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.111 s - in levy.daniel.application.model.services.utilitaires.upload.impl.FileSystemUploadServiceTest

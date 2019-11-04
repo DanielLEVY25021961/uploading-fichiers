@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: uploading-fichiers
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: dan
+Implementation-Vendor-Id: levy.daniel.application
+Build-Jdk: 1.8.0_212
+Implementation-URL: 
+Created-By: Maven Integration for Eclipse
+

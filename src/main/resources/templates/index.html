@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" type="text/css" 
+		href="../static/css/bootstrap.min.css" 
+		th:href="@{css/bootstrap.min.css}" />
+		<title>index.html</title>
+	</head>
+	
+	<body>
+	
+		<h1>Téléversements (UPLOADS) de fichiers</h1>
+		
+		<th:block th:include="/upload/bloc_menu"></th:block>
+		
+		<ul>
+			<li><a th:href="@{/versUploadOneFile}">Téléverser un unique fichier</a></li>
+			<li><a th:href="@{/uploadMultiFile}">Téléverser plusieurs fichiers en une seule fois</a></li>
+		</ul>
+	
+	</body>
+</html>
