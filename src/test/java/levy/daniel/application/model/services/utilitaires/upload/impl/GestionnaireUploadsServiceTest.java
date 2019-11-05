@@ -3,6 +3,7 @@ package levy.daniel.application.model.services.utilitaires.upload.impl;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -52,10 +53,22 @@ public class GestionnaireUploadsServiceTest {
 		= "src/test/resources/jeux_essai";
 	
 	/**
+	 * new File("src/test/resources/jeux_essai/HITDIRA2018").
+	 */
+	public static final File FILE_HITDIRA2018 
+		= new File("src/test/resources/jeux_essai/2018/HITDIRA2018");
+	
+	/**
 	 * "Liste des fichiers sous le répertoire : ".
 	 */
 	public static final String LISTE_FICHIERS_SOUS_REPERTOIRE 
 		= "Liste des fichiers sous le répertoire : ";
+	
+	/**
+	 * "Liste des fichiers de même poids sous le répertoire : ".
+	 */
+	public static final String LISTE_FICHIERS_MEME_POIDS_SOUS_REPERTOIRE 
+		= "Liste des fichiers de même poids sous le répertoire : ";
 
 	/**
 	 * "la liste resultat ne doit pas être null : ".
@@ -94,7 +107,7 @@ public class GestionnaireUploadsServiceTest {
 				
 		// **********************************
 		// AFFICHAGE DANS LE TEST ou NON
-		final boolean affichage = true;
+		final boolean affichage = false;
 		// **********************************
 		
 		/* AFFICHAGE A LA CONSOLE. */
@@ -161,6 +174,51 @@ public class GestionnaireUploadsServiceTest {
 		assertNotNull(LISTE_RESULTAT_DOIT_PAS_ETRE_NULL, resultat);
 		
 	} // Fin de testRecupererListeFichiersSousRepertoire().________________
+
+
+	
+	/**
+	 * <p>teste la méthode 
+	 * <code>recupererListeFichiersMemePoidsSousRepertoire(Path pPath, file pFile)</code>.</p>
+	 * 
+	 * @throws Exception 
+	 */
+	@SuppressWarnings(UNUSED)
+    @Test
+	public void testrecupererListeFichiersMemePoidsSousRepertoire() throws Exception {
+				
+		// **********************************
+		// AFFICHAGE DANS LE TEST ou NON
+		final boolean affichage = false;
+		// **********************************
+		
+		/* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+		System.out.println("********** CLASSE GestionnaireUploadsServiceTest - méthode testrecupererListeFichiersMemePoidsSousRepertoire() ********** ");
+		}
+		
+		// VALEURS A TESTER **********************************************
+		final Path repertoire1 = Paths.get(CHEMIN_REPERTOIRE);
+		final File fichier1 = FILE_HITDIRA2018;
+		// ***************************************************************
+		
+		// METHODE A TESTER *************************************************
+		final List<String> resultat 
+			= GestionnaireUploadsService // NOPMD by dan on 02/11/19 23:05
+				.recupererListeFichiersMemePoidsSousRepertoire(
+						repertoire1, fichier1);
+		// ******************************************************************
+		
+		
+		/* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println(LISTE_FICHIERS_MEME_POIDS_SOUS_REPERTOIRE + '\n' 
+					+ GestionnaireUploadsService.afficherListeString(resultat)); // NOPMD by dan on 02/11/19 23:06
+		}
+
+		assertNotNull(LISTE_RESULTAT_DOIT_PAS_ETRE_NULL, resultat);
+		
+	} // Fin de testrecupererListeFichiersMemePoidsSousRepertoire().________________
 
 	
 	

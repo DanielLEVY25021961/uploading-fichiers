@@ -193,6 +193,7 @@ public class ComparateurFichiersTest {
 		
 		/* AFFICHAGE A LA CONSOLE. */
 		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println("file2.exists() ? : " + file2.exists());
 			System.out.println(FICHIERS_AVEC_MEME_CONTENU + resultat);
 			System.out.println(RAPPORT_COMPARAISON + ComparateurFichiers.getRapportComparaison());
 		}

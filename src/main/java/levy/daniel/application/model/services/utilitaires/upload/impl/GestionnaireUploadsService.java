@@ -228,7 +228,8 @@ public class GestionnaireUploadsService {
 	 * <strong>dans tous ses sous-répertoires</strong> 
 	 * de <strong>même poids que pFile</strong>.
 	 * <ul>
-	 * <li>Récupère tous les fichiers simples dans tous les 
+	 * <li>Récupère tous les fichiers simples (de même poids que pFile) 
+	 * dans tous les 
 	 * sous-répertoires situés sous le répertoire racine situé à pPath.</li>
 	 * <li>Ne récupère pas les sous-répertoires.</li>
 	 * </ul>
