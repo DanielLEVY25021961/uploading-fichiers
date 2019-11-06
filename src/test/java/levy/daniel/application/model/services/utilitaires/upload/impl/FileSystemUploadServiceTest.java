@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.assertj.core.util.Files;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -398,7 +399,10 @@ public class FileSystemUploadServiceTest {
 	/**
 	 * teste la méthode 
 	 * <code>upload(MultipartFile pFileSource, File pFileTarget)</code>.<br/>
-	 * <br/>
+	 * <ul>
+	 * <li>garantit que le fichier est bien uploadé.</li>
+	 * </ul>
+	 * 
 	 * @throws Exception 
 	 */
 	@SuppressWarnings(UNUSED)
@@ -407,7 +411,7 @@ public class FileSystemUploadServiceTest {
 				
 		// **********************************
 		// AFFICHAGE DANS LE TEST ou NON
-		final boolean affichage = false;
+		final boolean affichage = true;
 		// **********************************
 		
 		/* AFFICHAGE A LA CONSOLE. */
@@ -416,22 +420,34 @@ public class FileSystemUploadServiceTest {
 		}
    	
 		// VALEURS A TESTER ******************************************************
+		final String originalFileName = "test_upload.txt";
+		
 		final MockMultipartFile foo = new MockMultipartFile(
 				"test_upload"
-				, "test_upload.txt"
+				, originalFileName
 				, MediaType.TEXT_PLAIN_VALUE
 				, "Ceci est un test d'upload en UTF-8 grâve bêèéle".getBytes(StandardCharsets.UTF_8));
 		
-		final File fileTarget = new File("televersements/testUpload.txt");
-		
+		final File fileTarget = new File("televersements/testUpload.txt");		
 		// VALEURS A TESTER ******************************************************
 		
 		
 		// METHODE A TESTER *************************************************
         this.service.uploadOneFile(foo, fileTarget);
         // *******************************************************************
+
+		/* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println("Le fichier '" + originalFileName + "' a bien été uploadé en " + fileTarget.getAbsolutePath());
+		}
         
+		/* garantit que le fichier est bien uploadé. */
         assertThat(fileTarget.exists());
+        
+        /* destruction du fichier uploadé. */
+        if (fileTarget.exists()) {
+        	Files.delete(fileTarget);
+        }
         
     } // Fin de testUpload().______________________________________________
 	
@@ -449,7 +465,7 @@ public class FileSystemUploadServiceTest {
 				
 		// **********************************
 		// AFFICHAGE DANS LE TEST ou NON
-		final boolean affichage = true;
+		final boolean affichage = false;
 		// **********************************
 		
 		/* AFFICHAGE A LA CONSOLE. */
@@ -514,41 +530,14 @@ public class FileSystemUploadServiceTest {
 				, fichierSource.length(), resultat.length());
 		
     } // Fin de testUploadReel().__________________________________________
-   
-    
-	
-    /**
-     * .<br/>
-     * <ul>
-     * <li>.</li>
-     * </ul>
-     * :  :  .<br/>
-     * @throws Exception 
-     */
-//    @Test(expected = StorageFileNotFoundRunTimeException.class)
-//    public void saveNotPermitted() throws Exception {
-//    	
-//       	
-//    		final MockMultipartFile foo = new MockMultipartFile(
-//    				FOO
-//    				, "../foo.txt"
-//    				, MediaType.TEXT_PLAIN_VALUE
-//    				, "Hello World".getBytes(StandardCharsets.UTF_8));
-//
-//        this.service.uploadOneFile(foo);
-//        
-//    }
 
     
        
-    /**
-     * .<br/>
-     * <ul>
-     * <li>.</li>
-     * </ul>
-     * :  :  .<br/>
-     * @throws Exception 
-     */
+	/**
+	  * Exécuté avant chaque test de la classe.<br/>
+	  * 
+	  * @throws Exception 
+	  */
     @Before
     public void init() throws Exception {
     	
