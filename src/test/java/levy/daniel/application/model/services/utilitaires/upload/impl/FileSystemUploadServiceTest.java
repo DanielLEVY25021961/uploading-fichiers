@@ -449,6 +449,11 @@ public class FileSystemUploadServiceTest {
         	Files.delete(fileTarget);
         }
         
+        /* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println(fileTarget.getAbsolutePath() + " a été détruit");
+		}
+		
     } // Fin de testUpload().______________________________________________
 	
 	
@@ -456,7 +461,10 @@ public class FileSystemUploadServiceTest {
 	/**
 	 * teste la méthode 
 	 * <code>upload(MultipartFile pFileSource, File pFileTarget)</code>.<br/>
-	 * <br/>
+	 * <ul>
+	 * <li>garantit que le fichier est bien uploadé.</li>
+	 * </ul>
+	 * 
 	 * @throws Exception 
 	 */
 	@SuppressWarnings(UNUSED)
@@ -465,7 +473,7 @@ public class FileSystemUploadServiceTest {
 				
 		// **********************************
 		// AFFICHAGE DANS LE TEST ou NON
-		final boolean affichage = false;
+		final boolean affichage = true;
 		// **********************************
 		
 		/* AFFICHAGE A LA CONSOLE. */
@@ -511,9 +519,8 @@ public class FileSystemUploadServiceTest {
 			
 		}
 			
-		final File fileTarget = new File("televersements/2018/DIRE/HITDIRE2018_ANSI.txt");
-		
-		// VALEURS A TESTER ******************************************************
+		final File fileTarget = new File("televersements/2018/DIRE/HITDIRE2018_ANSI_TEST.txt");		
+		// FIN DE VALEURS A TESTER ********************************************
 		
 		
 		// METHODE A TESTER *************************************************
@@ -522,12 +529,22 @@ public class FileSystemUploadServiceTest {
         
         /* AFFICHAGE A LA CONSOLE. */
 		if (AFFICHAGE_GENERAL && affichage) {
-			System.out.println("Fichier RESULTAT = " + resultat.getAbsolutePath());
+			System.out.println("Le fichier '" + fichierSourceoriginalFileName + "' a bien été uploadé en " + resultat.getAbsolutePath());
 		}
         
-
-		assertEquals("Les 2 fichiers doivent avoir la même longueur : "
+		/* garantit que le fichier est bien uploadé. */
+		assertEquals("Les 2 fichiers (source et uploadé) doivent avoir la même longueur : "
 				, fichierSource.length(), resultat.length());
+        
+        /* destruction du fichier uploadé. */
+        if (fileTarget.exists()) {
+        	Files.delete(fileTarget);
+        }
+        
+        /* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println(fileTarget.getAbsolutePath() + " a été détruit");
+		}
 		
     } // Fin de testUploadReel().__________________________________________
 

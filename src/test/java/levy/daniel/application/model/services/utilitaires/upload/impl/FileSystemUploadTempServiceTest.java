@@ -413,7 +413,7 @@ public class FileSystemUploadTempServiceTest {
 
 		// **********************************
 		// AFFICHAGE DANS LE TEST ou NON
-		final boolean affichage = true;
+		final boolean affichage = false;
 		// **********************************
 
 		/* AFFICHAGE A LA CONSOLE. */
@@ -450,6 +450,11 @@ public class FileSystemUploadTempServiceTest {
         if (fileTarget.exists()) {
         	Files.delete(fileTarget);
         }
+        
+        /* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println(fileTarget.getAbsolutePath() + " a été détruit");
+		}
 
 	} // Fin de testUpload().______________________________________________
 		
@@ -458,80 +463,93 @@ public class FileSystemUploadTempServiceTest {
 		/**
 		 * teste la méthode 
 		 * <code>upload(MultipartFile pFileSource, File pFileTarget)</code>.<br/>
-		 * <br/>
+		 * <ul>
+		 * <li>garantit que le fichier est bien uploadé.</li>
+		 * </ul>
+		 * 
 		 * @throws Exception 
 		 */
 		@SuppressWarnings(UNUSED)
 	 @Test
-	 public void testUploadReel() throws Exception {
-					
-			// **********************************
-			// AFFICHAGE DANS LE TEST ou NON
-			final boolean affichage = true;
-			// **********************************
-			
-			/* AFFICHAGE A LA CONSOLE. */
-			if (AFFICHAGE_GENERAL && affichage) {
-			System.out.println("********** CLASSE FileSystemUploadTempServiceTest - méthode testUploadReel() ********** ");
+	public void testUploadReel() throws Exception {
+
+		// **********************************
+		// AFFICHAGE DANS LE TEST ou NON
+		final boolean affichage = true;
+		// **********************************
+
+		/* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println(
+					"********** CLASSE FileSystemUploadTempServiceTest - méthode testUploadReel() ********** ");
+		}
+
+		// VALEURS A TESTER ******************************************************
+		final File fichierSource = new File("./src/test/resources/jeux_essai/2018/HITDIRE2018.txt");
+		final String fichierSourceName = "HITDIRE2018.txt";
+		final String fichierSourceoriginalFileName = "HITDIRE2018.txt";
+
+		FileInputStream inputStream = null;
+		InputStreamReader inputSreamReader = null;
+		MultipartFile foo = null;
+
+		try {
+
+			inputStream = new FileInputStream(fichierSource);
+			inputSreamReader = new InputStreamReader(inputStream, Charset.forName("Windows-1252"));
+
+			foo = new MockMultipartFile(
+					fichierSourceName
+					, fichierSourceoriginalFileName
+					, MediaType.TEXT_PLAIN_VALUE
+					, IOUtils.toByteArray(inputSreamReader, Charset.forName("Windows-1252")));
+
+		} catch (Exception e) {
+
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("impossible de lire le fichier : " + fichierSource.getAbsolutePath(), e);
 			}
+
+		} finally {
+
+			if (inputSreamReader != null) {
+				inputSreamReader.close();
+			}
+
+			if (inputStream != null) {
+				inputStream.close();
+			}
+
+		}
+
+		final File fileTarget = new File("temp/HITDIRE2018_ANSI_TEST.txt");
+		// FIN DE VALEURS A TESTER ********************************************
+
 		
-			// VALEURS A TESTER ******************************************************
-			final File fichierSource = new File("./src/test/resources/jeux_essai/2018/HITDIRE2018.txt");
-			final String fichierSourceName = "HITDIRE2018.txt";
-			final String fichierSourceoriginalFileName = "HITDIRE2018.txt";
-			
-			FileInputStream inputStream = null;
-			InputStreamReader inputSreamReader = null;
-			MultipartFile foo = null;
-			
-			try {
-				
-				inputStream = new FileInputStream(fichierSource);
-				inputSreamReader = new InputStreamReader(inputStream, Charset.forName("Windows-1252"));
-				
-				foo = new MockMultipartFile(
-						fichierSourceName
-							, fichierSourceoriginalFileName
-								, MediaType.TEXT_PLAIN_VALUE
-									, IOUtils.toByteArray(inputSreamReader, Charset.forName("Windows-1252")));
-				
-			} catch (Exception e) {
-				
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("impossible de lire le fichier : " + fichierSource.getAbsolutePath(), e);
-				}
-				
-			} finally {
-				
-				if (inputSreamReader != null) {
-					inputSreamReader.close();
-				}
-				
-				if (inputStream != null) {
-					inputStream.close();
-				}
-				
-			}
-				
-			final File fileTarget = new File("temp/2018/DIRE/HITDIRE2018_ANSI.txt");
-			
-			// VALEURS A TESTER ******************************************************
-			
-			
-			// METHODE A TESTER *************************************************
-	     final File resultat = this.service.uploadOneFile(foo, fileTarget);
-	     // *******************************************************************
-	     
-	     /* AFFICHAGE A LA CONSOLE. */
-			if (AFFICHAGE_GENERAL && affichage) {
-				System.out.println("Fichier RESULTAT = " + resultat.getAbsolutePath());
-			}
-	     
-	
-			assertEquals("Les 2 fichiers doivent avoir la même longueur : "
-					, fichierSource.length(), resultat.length());
-			
-	 } // Fin de testUploadReel().__________________________________________
+		// METHODE A TESTER *************************************************
+		final File resultat = this.service.uploadOneFile(foo, fileTarget);
+		// *******************************************************************
+
+		/* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println("Le fichier '" + fichierSourceoriginalFileName + "' a bien été uploadé en " + resultat.getAbsolutePath());
+		}
+
+		/* garantit que le fichier est bien uploadé. */
+		assertEquals("Les 2 fichiers (source et uploadé) doivent avoir la même longueur : "
+				, fichierSource.length(), resultat.length());
+        
+        /* destruction du fichier uploadé. */
+        if (fileTarget.exists()) {
+        	Files.delete(fileTarget);
+        }
+        
+        /* AFFICHAGE A LA CONSOLE. */
+		if (AFFICHAGE_GENERAL && affichage) {
+			System.out.println(fileTarget.getAbsolutePath() + " a été détruit");
+		}
+
+	} // Fin de testUploadReel().__________________________________________
 	
 	 
 	    
@@ -545,8 +563,8 @@ public class FileSystemUploadTempServiceTest {
 	 	
 	     this.service = new FileSystemUploadTempService();
 	     
-	 } // Fin de init().____________________________________________________
+	 } // Fin de init().___________________________________________________
 
  
  
-}
+} // FIN DE LA CLASSE FileSystemUploadTempServiceTest.-----------------------
